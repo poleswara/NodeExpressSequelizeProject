@@ -13,7 +13,9 @@ exports.UserCreate = (req,res)=>{
         password  : bcrypt.hashSync(password,8)
     })
     .then(data=>{
-        res.send(data);
+        res.status(200).send({
+            message : data.message | "User Created Successfuly"
+        });
     })
     .catch(err=>{
         res.status(500).send({

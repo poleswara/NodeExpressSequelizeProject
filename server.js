@@ -7,7 +7,7 @@ const db = require("./models/db.index");
 db.sequelize.sync();
 
 var corsOptions = {
-  origin: "http://localhost:8080"
+  origin: "http://localhost:3000"
 };
 
 app.use(cors(corsOptions));
@@ -17,7 +17,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(route);
 
 app.get("/", (req, res) => {
-    res.json({ message: "Welcome to node application." });
+    res.json({ message: "welcome to node application." });
 });
 
 const PORT = process.env.PORT || 8080;
