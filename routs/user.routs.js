@@ -5,6 +5,7 @@ module.exports = () =>{
     // End Points
     router.post("/creareuser",user.UserCreate);
     router.put("/updateuser",user.UserUpdate);
+    router.get("/allusers",user.getAllUsers);
 
     return router;
 };

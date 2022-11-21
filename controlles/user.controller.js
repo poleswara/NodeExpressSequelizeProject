@@ -40,3 +40,15 @@ exports.UserUpdate = (req,res)=>{
         })
     })
 };
+
+exports.getAllUsers = (req,res)=>{
+    User.findAll()
+    .then(data=>{
+        res.json(data);
+    })
+    .catch(err=>{
+        res.status(500).send({
+            message : err.message | "Something Went Wrong"
+        })
+    })
+}
