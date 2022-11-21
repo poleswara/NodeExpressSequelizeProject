@@ -12,7 +12,7 @@ module.exports = (sequelize, Sequelize) => {
         type: Sequelize.STRING
       },
       password: {
-        type: Sequelize.INTEGER
+        type: Sequelize.STRING
       },
       createdAt : {
         filed : "created_at",

@@ -1,6 +1,7 @@
 const db = require("../models/db.index");
 const User = db.user;
 const Op = db.Sequelize.Op;
+const bcrypt = require("bcryptjs");
 
 exports.UserCreate = (req,res)=>{
     const name = req.body.name;
@@ -9,7 +10,7 @@ exports.UserCreate = (req,res)=>{
     User.create({
         name : name,
         email : email,
-        password  :password
+        password  : bcrypt.hashSync(password,8)
     })
     .then(data=>{
         res.send(data);
@@ -22,7 +23,12 @@ exports.UserCreate = (req,res)=>{
 };
 
 exports.UserUpdate = (req,res)=>{
-    User.update(req.body,{
+    const bodyData = {
+        name :req.body.name,
+        email : req.body.email,
+        password :bcrypt.hashSync(req.body.password,8) ,
+    }
+    User.update(bodyData,{
         where : {email : req.body.email}
     })
     .then(data=>{
