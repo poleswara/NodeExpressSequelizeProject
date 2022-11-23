@@ -6,6 +6,7 @@ module.exports = () =>{
     router.post("/creareuser",user.UserCreate);
     router.put("/updateuser",user.UserUpdate);
     router.get("/allusers",user.getAllUsers);
+    router.delete("/user/:id",user.deteteUser);
 
     return router;
 };

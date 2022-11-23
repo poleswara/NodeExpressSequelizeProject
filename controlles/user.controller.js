@@ -53,4 +53,18 @@ exports.getAllUsers = (req,res)=>{
             message : err.message | "Something Went Wrong"
         })
     })
+};
+
+exports.deteteUser = (req,res,next)=>{
+    User.destroy({where : {id : req.params.id}})
+    .then(data=>{
+        res.status(200).send({
+            message : data.message | "User Deleted Successfuly"
+        })
+    .catch(err=>{
+        res.status(500).send({
+            message : err.message | "Something Went Wrong"
+        })
+    })
+    })
 }
