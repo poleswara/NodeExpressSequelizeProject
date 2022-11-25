@@ -1,9 +1,10 @@
 const db = require("../models/db.index");
 const User = db.user;
+const Role = db.role;
 const Op = db.Sequelize.Op;
 const bcrypt = require("bcryptjs");
 
-exports.UserCreate = (req,res)=>{
+exports.signUp = (req,res)=>{
     const name = req.body.name;
     const email = req.body.email;
     const password = req.body.password;
@@ -12,10 +13,24 @@ exports.UserCreate = (req,res)=>{
         email : email,
         password  : bcrypt.hashSync(password,8)
     })
-    .then(data=>{
-        res.status(200).send({
-            message : data.message | "User Created Successfuly"
-        });
+    .then(user=>{
+        if (req.body.roles) {
+            Role.findAll({
+              where: {
+                name: {
+                  [Op.or]: req.body.roles
+                }
+              }
+            }).then(roles => {
+              user.setRoles(roles).then(() => {
+                res.send({ message: "User was registered successfully!" });
+              });
+            });
+          } else {
+            user.setRoles([1]).then(() => {
+              res.send({ message: "User was registered successfully!" });
+            });
+          }
     })
     .catch(err=>{
         res.status(500).send({

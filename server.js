@@ -3,8 +3,12 @@ const cors = require("cors");
 const app = express();
 const route = require("./routs/user.routs")(app);
 const db = require("./models/db.index");
+const Role = require("./controlles/role.controller");
 
-db.sequelize.sync();
+db.sequelize.sync({force : true})
+.then(()=>{
+  Role.Initial();
+})
 
 var corsOptions = {
   origin: "http://localhost:3000"
