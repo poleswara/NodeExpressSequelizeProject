@@ -2,6 +2,7 @@ const db = require("../models/db.index");
 const User = db.user;
 const Role = db.role;
 const Op = db.Sequelize.Op;
+var jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 
 exports.signUp = (req,res)=>{
@@ -39,47 +40,48 @@ exports.signUp = (req,res)=>{
     });
 };
 
-exports.UserUpdate = (req,res)=>{
-    const bodyData = {
-        name :req.body.name,
-        email : req.body.email,
-        password :bcrypt.hashSync(req.body.password,8) ,
-    }
-    User.update(bodyData,{
-        where : {email : req.body.email}
+exports.signin = (req, res) => {
+    User.findOne({
+      where: {
+        name: req.body.name
+      }
     })
-    .then(data=>{
-        res.status(200).send({message : "user updated successfuly"});
-    })
-    .catch(err=>{
-        res.status(400).send({
-            message : err.message || "User Not Updated"
-        })
-    })
-};
-
-exports.getAllUsers = (req,res)=>{
-    User.findAll()
-    .then(data=>{
-        res.json(data);
-    })
-    .catch(err=>{
-        res.status(500).send({
-            message : err.message | "Something Went Wrong"
-        })
-    })
-};
-
-exports.deteteUser = (req,res,next)=>{
-    User.destroy({where : {id : req.params.id}})
-    .then(data=>{
-        res.status(200).send({
-            message : data.message | "User Deleted Successfuly"
-        })
-    .catch(err=>{
-        res.status(500).send({
-            message : err.message | "Something Went Wrong"
-        })
-    })
-    })
-}
+      .then(user => {
+        if (!user) {
+          return res.status(404).send({ message: "User Not found." });
+        }
+  
+        var passwordIsValid = bcrypt.compareSync(
+          req.body.password,
+          user.password
+        );
+  
+        if (!passwordIsValid) {
+          return res.status(401).send({
+            accessToken: null,
+            message: "Invalid Password!"
+          });
+        }
+  
+        var token = jwt.sign({ id: user.id }, config.secret, {
+          expiresIn: 86400
+        });
+  
+        var authorities = [];
+        user.getRoles().then(roles => {
+          for (let i = 0; i < roles.length; i++) {
+            authorities.push("ROLE_" + roles[i].name.toUpperCase());
+          }
+          res.status(200).send({
+            id: user.id,
+            name: user.name,
+            email: user.email,
+            roles: authorities,
+            accessToken: token
+          });
+        });
+      })
+      .catch(err => {
+        res.status(500).send({ message: err.message });
+      });
+  };

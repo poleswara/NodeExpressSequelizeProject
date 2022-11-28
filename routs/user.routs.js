@@ -1,12 +1,32 @@
-module.exports = () =>{
-    const user = require("../controlles/user.controller");
-    var router  = require("express").Router();
+const { authJwt } = require("../middleware");
+const controller = require("../controlles/users.controllers");
 
-    // User  End Points
-    router.post("/creareuser",user.signUp);
-    router.put("/updateuser",user.UserUpdate);
-    router.get("/allusers",user.getAllUsers);
-    router.delete("/user/:id",user.deteteUser);
+module.exports = function(app) {
+  app.use(function(req, res, next) {
+    res.header(
+      "Access-Control-Allow-Headers",
+      "x-access-token, Origin, Content-Type, Accept"
+    );
+    next();
+  });
 
-    return router;
+  app.get("/api/test/all", controller.allAccess);
+
+  app.get(
+    "/api/test/user",
+    [authJwt.verifyToken],
+    controller.userBoard
+  );
+
+  app.get(
+    "/api/test/mod",
+    [authJwt.verifyToken, authJwt.isModerator],
+    controller.moderatorBoard
+  );
+
+  app.get(
+    "/api/test/admin",
+    [authJwt.verifyToken, authJwt.isAdmin],
+    controller.adminBoard
+  );
 };
