@@ -4,13 +4,14 @@ const Role = db.role;
 const Op = db.Sequelize.Op;
 var jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
+const config = require("../config/auth.config");
 
 exports.signUp = (req,res)=>{
-    const name = req.body.name;
+    const username = req.body.username;
     const email = req.body.email;
     const password = req.body.password;
     User.create({
-        name : name,
+        username : username,
         email : email,
         password  : bcrypt.hashSync(password,8)
     })
@@ -40,10 +41,10 @@ exports.signUp = (req,res)=>{
     });
 };
 
-exports.signin = (req, res) => {
+exports.signIn = (req, res) => {
     User.findOne({
       where: {
-        name: req.body.name
+        email: req.body.email
       }
     })
       .then(user => {
@@ -63,8 +64,8 @@ exports.signin = (req, res) => {
           });
         }
   
-        var token = jwt.sign({ id: user.id }, config.secret, {
-          expiresIn: 86400
+        var token = jwt.sign({ id : user.id }, config.secret, {
+          expiresIn: 3600
         });
   
         var authorities = [];
@@ -74,7 +75,7 @@ exports.signin = (req, res) => {
           }
           res.status(200).send({
             id: user.id,
-            name: user.name,
+            username: user.username,
             email: user.email,
             roles: authorities,
             accessToken: token

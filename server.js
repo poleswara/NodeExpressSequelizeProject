@@ -5,7 +5,7 @@ const db = require("./models/db.index");
 const Role = require("./controlles/role.controller");
 
 db.sequelize.sync({force : true})
-.then(()=>{
+.then((e)=>{
   Role.Initial();
 })
 
