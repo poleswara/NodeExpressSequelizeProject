@@ -1,3 +1,3 @@
 module.exports = {
-    secret: "nodeexpresssqlsequelize-secret-key"
-}
+  secret: "nodeexpresssqlsequelize-secret-key",
+};

@@ -9,10 +9,10 @@ const db = require("./models/db.index");
 //   Role.Initial();
 // })
 
-db.sequelize.sync()
+db.sequelize.sync();
 
 var corsOptions = {
-  origin: "http://localhost:3000"
+  origin: "http://localhost:3000",
 };
 
 app.use(cors(corsOptions));
@@ -20,9 +20,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.get("/", (req, res) => {
-    res.json({ message: "welcome to node application." });
+  res.json({ message: "welcome to node application." });
 });
-
 
 require("./routs/user.routs")(app);
 require("./routs/auth.routs")(app);
